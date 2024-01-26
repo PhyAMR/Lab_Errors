@@ -34,17 +34,45 @@ def detect_var(expression):
     return list(variables)
 
 
-print(detect_var(r'\frac{r}{r_{300}}'))
+print(detect_var(r'\frac{r}{yr_{300}}'))
 
 
-def inside_sqrt(expression):
-    var = detect_var(expression)
-    var_errors = [syp.symbols(f'\Delta{v}') for v in var]
+def Error(expression, cons):
+    const = syp.symbols(list(cons))
+    variables = detect_var(expression)
+    var_errors = [syp.symbols(f'\Delta{var}')
+                  for var in variables if var not in const]
     der = 0
-    for i, j in zip(var, var_errors):
+    var_no_con = [var for var in variables if var not in const]
+    for i, j in zip(var_no_con, var_errors):
         der += (derivatives(expression, i))**2*j**2
 
-    return der
+    return syp.sqrt(der)
 
 
-print(inside_sqrt(r'\frac{r}{r_{300}}'))
+print(Error(r'\frac{r}{r_{300}}', [r"r_{300}"]))
+
+
+def trans_expression(formula):
+
+    before, after = formula.split('=', maxsplit=2)
+    before = r'\Delta' + before + r'='
+    return before, after
+
+
+# print(trans_expression(r'\frac{r}{r_{300}}'))
+
+
+def calculate_error(formula, const):
+    if "=" in formula:
+        before, expression = trans_expression(formula)
+    else:
+        expression = formula
+
+    error = Error(expression, const)
+    error_formula = before + str(error)
+    error_formula = error_formula.replace('\Delta', '\Delta ')
+    return error_formula, error
+
+
+print(calculate_error(r'T=\frac{r}{r_{300}}', ["r_{300}"]))
