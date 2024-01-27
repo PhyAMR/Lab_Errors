@@ -1,6 +1,9 @@
 import latex2sympy2 as ls
 import sympy as syp
 
+expr = input(' Insert expression written in latex: ')
+# const = input(' Insert constants written in latex: ')
+
 
 def convert_latex_to_sympy(expression):
     try:
@@ -12,7 +15,7 @@ def convert_latex_to_sympy(expression):
 
 
 # Example of what de function output is
-print(convert_latex_to_sympy(r'\frac{x}{y}'))
+print(convert_latex_to_sympy(expr))
 
 
 def derivatives(expression, var):
@@ -24,8 +27,8 @@ def derivatives(expression, var):
 
 
 # Example of partial derivative
-print(derivatives(r'\frac{x}{y}', 'x'))
-print(derivatives(r'\frac{x}{y}', 'y'))
+print(derivatives(expr, 'x'))
+print(derivatives(expr, 'y'))
 
 
 def detect_var(expression):
@@ -34,7 +37,7 @@ def detect_var(expression):
     return list(variables)
 
 
-print(detect_var(r'\frac{r}{yr_{300}}'))
+print(detect_var(expr))
 
 
 def Error(expression, cons):
@@ -50,7 +53,7 @@ def Error(expression, cons):
     return syp.sqrt(der)
 
 
-print(Error(r'\frac{r}{r_{300}}', [r"r_{300}"]))
+print(Error(expr, ["r_{300}"]))
 
 
 def trans_expression(formula):
@@ -67,12 +70,21 @@ def calculate_error(formula, const):
     if "=" in formula:
         before, expression = trans_expression(formula)
     else:
+        before = ' '
         expression = formula
 
     error = Error(expression, const)
-    error_formula = before + str(error)
-    error_formula = error_formula.replace('\Delta', '\Delta ')
-    return error_formula, error
+    error_formula = before + str(syp.latex(error))
+    error_show = str(error_formula.replace('\Delta', '\Delta '))
+    error_copy = error_show.replace('\\\\', '\\')
+    return error_show, error_copy
 
 
-print(calculate_error(r'T=\frac{r}{r_{300}}', ["r_{300}"]))
+print(calculate_error(expr, ["R_{300}"]))
+
+
+cadena_con_doble_barra = "mi\\cadena\\con\\doble\\barra"
+cadena_con_una_barra = cadena_con_doble_barra.replace('\\\\', '\\')
+
+print("Cadena original:", cadena_con_doble_barra)
+print("Cadena modificada:", cadena_con_una_barra)
