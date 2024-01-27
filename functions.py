@@ -81,10 +81,3 @@ def calculate_error(formula, const):
 
 
 print(calculate_error(expr, ["R_{300}"]))
-
-
-cadena_con_doble_barra = "mi\\cadena\\con\\doble\\barra"
-cadena_con_una_barra = cadena_con_doble_barra.replace('\\\\', '\\')
-
-print("Cadena original:", cadena_con_doble_barra)
-print("Cadena modificada:", cadena_con_una_barra)
