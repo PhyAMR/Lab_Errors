@@ -59,10 +59,12 @@ def main(page: ft.Page):
         else:
             name = txt_name.value
             vars = fn.detect_var(name)
+            row = []
             for i in vars:
                 fig = fn.render_formula(i)
-                page.add(MatplotlibChart(fig, expand=True, scale=0.5))
-
+                row.append(MatplotlibChart(fig, expand=True, scale=0.5))
+            r2 = ft.Row([ft.Container(expand=1, content=j) for j in row])
+            page.add(r2)
             page.update()
     E = ft.ElevatedButton("Evaluate", on_click=btn_click2)
     r = ft.Row([
