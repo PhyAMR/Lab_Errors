@@ -77,11 +77,11 @@ def calculate_error(formula, const):
         before = ' '
         expression = formula
 
-    error = Error(expression, const)
+    error = syp.simplify(Error(expression, const))
     error_formula = before + str(syp.latex(error))
     error_show = str(error_formula.replace('\Delta', '\Delta '))
-    error_copy = error_show.replace('\\\\', '\\')
-    return error_show, error_copy
+
+    return error_show
 
 
 # print(calculate_error(expr1, ["R_{300}"]))

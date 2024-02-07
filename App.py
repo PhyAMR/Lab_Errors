@@ -26,9 +26,10 @@ def main(page: ft.Page):
             page.update()
         else:
             name = txt_name.value
-            a, b = fn.calculate_error(name, ['g'])
+            b = fn.calculate_error(name, ['g'])
             fig = fn.render_formula(b)
-            page.add(MatplotlibChart(fig, expand=True, scale=0.5))
+            page.add(MatplotlibChart(fig, expand=True))
+            page.set_clipboard(b)
             page.update()
 
     txt_name = ft.TextField(label="Your formula")
