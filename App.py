@@ -29,7 +29,7 @@ def main(page: ft.Page):
             # Here changed the variables, I'm trying to make an interface to select them
             b = fn.calculate_error(name, ['g', 'N'])
             fig = fn.render_formula(b)
-            page.add(MatplotlibChart(fig, expand=True))
+            page.add(MatplotlibChart(fig, expand=True, scale=0.5))
             page.set_clipboard(b)
             page.update()
 
@@ -40,8 +40,8 @@ def main(page: ft.Page):
     C = ft.ElevatedButton("Calculate", on_click=btn_click)
 
     dlg = ft.AlertDialog(
-        title=ft.Text(""" Usage \t To use this calculator enter your latex formula, click evaluate to add the value of the constants 
-                      \t and then click calculate """), on_dismiss=lambda e: print("Dialog dismissed!")
+        title=ft.Text(""" Usage \n To use this calculator enter your latex formula, click evaluate to add the value of the constants 
+                       and then click calculate """), on_dismiss=lambda e: print("Dialog dismissed!")
     )
 
     def close_dlg(e):
@@ -62,16 +62,29 @@ def main(page: ft.Page):
             name = txt_name.value
             vars = fn.detect_var(name)
             row = []
+            b = ft.Dropdown(
+                label="Type",
+                hint_text="Choose the type of your variable",
+                options=[
+                    ft.dropdown.Option("Constant"),
+                    ft.dropdown.Option("Value"),
+                    ft.dropdown.Option("Parameter"),
+                ],
+                autofocus=True,
+            )
             for i in vars:
                 fig = fn.render_formula(i)
-                row.append(MatplotlibChart(fig, expand=True, scale=0.5))
+                row.append(MatplotlibChart(fig, scale=0.2))
             r2 = ft.Row([ft.Container(expand=1, content=j) for j in row])
             page.add(r2)
+            r3 = ft.Row([ft.Container(expand=1, content=b)
+                        for _ in range(len(row))])
+            page.add(r3)
             page.update()
     E = ft.ElevatedButton("Evaluate", on_click=btn_click2)
     r = ft.Row([
-        ft.Container(expand=1, content=C),
         ft.Container(expand=1, content=E),
+        ft.Container(expand=1, content=C),
         ft.Container(expand=1, content=I)
     ])
     page.add(r)
