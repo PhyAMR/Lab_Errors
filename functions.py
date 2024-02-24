@@ -13,7 +13,7 @@ def convert_latex_to_sympy(expression):
     try:
         symbolic = ls.latex2sympy(expression)
     except Exception as e:
-        # print(f"Error in the conversion to symbolic equation: {e}")
+        print(f"Error in the conversion to symbolic equation: {e}")
         return None, None
     return symbolic
 
@@ -77,7 +77,7 @@ def calculate_error(formula, const):
         before = ' '
         expression = formula
 
-    error = syp.together(Error(expression, const))
+    error = syp.powsimp(syp.together(Error(expression, const)))
     error_formula = before + str(syp.latex(error))
     error_show = str(error_formula.replace('\Delta', '\Delta '))
 
