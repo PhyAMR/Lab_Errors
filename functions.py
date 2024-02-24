@@ -91,7 +91,7 @@ def calculate_error(formula, const):
 def render_formula(expr):
     fig = plt.figure()
     plt.axis("off")
-    plt.text(0.5, 0.5, f"${expr}$", size=50, ha="center", va="center")
+    plt.text(0.5, 0.5, f"${expr}$", fontsize=10, ha="center", va="center")
     return fig
 
 
@@ -101,5 +101,5 @@ def render_var(expr):
     if "\\" in expr:
         expr = "\\"+expr
     plt.text(0.2, 0.2, f"${expr}$",
-             size=5, ha="center", va="center")
+             fontsize=10, ha="center", va="center")
     return fig
