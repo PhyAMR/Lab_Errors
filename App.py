@@ -27,7 +27,7 @@ def main(page: ft.Page):
         else:
             name = txt_name.value
             # Here changed the variables, I'm trying to make an interface to select them
-            b = fn.calculate_error(name, ['g', 'N'])
+            b = fn.calculate_error(name, ['g', 'N', 'R'])
             fig = fn.render_formula(b)
             page.add(MatplotlibChart(fig, expand=True, scale=0.5))
             page.set_clipboard(b)
