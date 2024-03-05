@@ -77,7 +77,7 @@ def calculate_error(formula, const):
         before = ' '
         expression = formula
 
-    error = syp.powsimp(syp.together(Error(expression, const)))
+    error = Error(expression, const)
     error_formula = before + str(syp.latex(error))
     error_show = str(error_formula.replace('\Delta', '\Delta '))
 
