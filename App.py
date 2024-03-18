@@ -52,9 +52,10 @@ def main(page: ft.Page):
         page.dialog = dlg
         dlg.open = True
         page.update()
+    
     I = ft.ElevatedButton("Instructions", on_click=open_dlg)
 
-    def btn_click2(e):
+    """ def btn_click2(e):
         if not txt_name.value:
             txt_name.error_text = "Please enter the formula"
             page.update()
@@ -81,9 +82,9 @@ def main(page: ft.Page):
                         for _ in range(len(row))])
             page.add(r3)
             page.update()
-    E = ft.ElevatedButton("Evaluate", on_click=btn_click2)
+    E = ft.ElevatedButton("Evaluate", on_click=btn_click2) """
     r = ft.Row([
-        ft.Container(expand=1, content=E),
+        """ ft.Container(expand=1, content=E), """
         ft.Container(expand=1, content=C),
         ft.Container(expand=1, content=I)
     ])
