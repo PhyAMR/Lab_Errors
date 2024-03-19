@@ -6,6 +6,7 @@ from flet.matplotlib_chart import MatplotlibChart
 def main(page: ft.Page):
     page.title = "Calculadora de errores de laboratorio"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.scroll = ft.ScrollMode.AUTO
 
     page.appbar = ft.AppBar(
         title=ft.Text(
@@ -20,24 +21,13 @@ def main(page: ft.Page):
         color=ft.colors.WHITE,
     )
 
-    def btn_click(e):
-        if not txt_name.value:
-            txt_name.error_text = "Please enter the formula"
-            page.update()
-        else:
-            name = txt_name.value
-            # Here changed the variables, I'm trying to make an interface to select them
-            b = fn.calculate_error(name, ['g', 'N', 'R'])
-            fig = fn.render_formula(b)
-            page.add(MatplotlibChart(fig, expand=True, scale=0.5))
-            page.set_clipboard(b)
-            page.update()
+    
 
     txt_name = ft.TextField(label="Your formula")
 
     page.add(txt_name)
 
-    C = ft.ElevatedButton("Calculate", on_click=btn_click)
+    
 
     dlg = ft.AlertDialog(
         title=ft.Text(""" Usage \n To use this calculator enter your latex formula, click evaluate to add the value of the constants 
@@ -52,10 +42,10 @@ def main(page: ft.Page):
         page.dialog = dlg
         dlg.open = True
         page.update()
-    
-    I = ft.ElevatedButton("Instructions", on_click=open_dlg)
 
-    """ def btn_click2(e):
+    I = ft.ElevatedButton("Instructions", on_click=open_dlg)
+    const = []
+    def btn_click2(e):
         if not txt_name.value:
             txt_name.error_text = "Please enter the formula"
             page.update()
@@ -75,20 +65,46 @@ def main(page: ft.Page):
             )
             for i in vars:
                 fig = fn.render_formula(i)
-                row.append(MatplotlibChart(fig, scale=0.2))
+                row.append(MatplotlibChart(fig, scale=1))
             r2 = ft.Row([ft.Container(expand=1, content=j) for j in row])
             page.add(r2)
-            r3 = ft.Row([ft.Container(expand=1, content=b)
-                        for _ in range(len(row))])
+            d=[ft.Container(expand=1, content=b)
+                        for _ in range(len(row))]
+            r3 = ft.Row(d)
+            
+            """ for i ,j in zip(d,vars):
+                if i.value == "Constant":
+                    const.append(j)
+ """
+            
+            
             page.add(r3)
             page.update()
-    E = ft.ElevatedButton("Evaluate", on_click=btn_click2) """
+
+    def btn_click(e):
+        if not txt_name.value:
+            txt_name.error_text = "Please enter the formula"
+            page.update()
+        else:
+            name = txt_name.value
+            # Here changed the variables, I'm trying to make an interface to select them
+            
+
+            form = fn.calculate_error(name, const)
+            fig = fn.render_formula(form)
+            page.add(MatplotlibChart(fig, scale=1))
+            page.set_clipboard(form)
+            page.update()
+
+    C = ft.ElevatedButton("Calculate", on_click=btn_click)
+    E = ft.ElevatedButton("Evaluate", on_click=btn_click2)
     r = ft.Row([
-        """ ft.Container(expand=1, content=E), """
+        ft.Container(expand=1, content=E),
         ft.Container(expand=1, content=C),
         ft.Container(expand=1, content=I)
     ])
     page.add(r)
+    
 
 
 ft.app(target=main)
