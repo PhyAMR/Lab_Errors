@@ -1,6 +1,7 @@
 import functions as fn
 import flet as ft
 from flet.matplotlib_chart import MatplotlibChart
+import functools
 
 
 def main(page: ft.Page):
@@ -21,13 +22,9 @@ def main(page: ft.Page):
         color=ft.colors.WHITE,
     )
 
-    
-
     txt_name = ft.TextField(label="Your formula")
 
     page.add(txt_name)
-
-    
 
     dlg = ft.AlertDialog(
         title=ft.Text(""" Usage \n To use this calculator enter your latex formula, click evaluate to add the value of the constants 
@@ -45,41 +42,64 @@ def main(page: ft.Page):
 
     I = ft.ElevatedButton("Instructions", on_click=open_dlg)
     const = []
+
     def btn_click2(e):
         if not txt_name.value:
             txt_name.error_text = "Please enter the formula"
             page.update()
         else:
             name = txt_name.value
+            form = fn.convert_latex_to_sympy(name)
             vars = fn.detect_var(name)
-            row = []
-            b = ft.Dropdown(
-                label="Type",
-                hint_text="Choose the type of your variable",
-                options=[
-                    ft.dropdown.Option("Constant"),
-                    ft.dropdown.Option("Value"),
-                    ft.dropdown.Option("Parameter"),
-                ],
-                autofocus=True,
-            )
-            for i in vars:
-                fig = fn.render_formula(i)
-                row.append(MatplotlibChart(fig, scale=1))
-            r2 = ft.Row([ft.Container(expand=1, content=j) for j in row])
-            page.add(r2)
-            d=[ft.Container(expand=1, content=b)
-                        for _ in range(len(row))]
-            r3 = ft.Row(d)
-            
-            """ for i ,j in zip(d,vars):
-                if i.value == "Constant":
-                    const.append(j)
- """
-            
-            
-            page.add(r3)
+
+            # Lista para almacenar los campos de texto
+            text_fields = []
+
+            # Crear los campos de texto para introducir los valores
+            for var in vars:
+                text_field = ft.TextField(label=f"Enter value for {var}")
+                text_fields.append(text_field)
+                page.add(ft.Container(expand=1, content=text_field))
+
+            # Actualizar la página para mostrar los campos de texto
             page.update()
+
+            # Esperar a que el usuario introduzca los valores
+            input_values = []
+            for field in text_fields:
+                while True:
+                    if field.value is not None and field.value.strip() != "":
+                        try:
+                            input_values.append(float(field.value))
+                            break
+                        except ValueError:
+                            # El usuario introdujo un valor no numérico, pedir de nuevo
+                            field.error_text = "Please enter a valid number"
+                            page.update()
+                    else:
+                        # El campo está vacío, pedir al usuario que lo complete
+                        field.error_text = "Please enter a number"
+                        page.update()
+
+            # Crear el diccionario de sustitución
+            sub = dict(zip(vars, input_values))
+
+            # Evaluar la fórmula con los valores ingresados
+            result = form.evalf(subs=sub)
+            print("Result:", result)
+
+            page.update()
+
+    def calc(e, form, vars, text_fields):
+        # Obtener los valores ingresados por el usuario
+        input_values = [float(field.value) for field in text_fields]
+
+        # Crear el diccionario de sustitución
+        sub = dict(zip(vars, input_values))
+
+        # Evaluar la fórmula con los valores ingresados
+        result = form.evalf(subs=sub)
+        print("Result:", result)
 
     def btn_click(e):
         if not txt_name.value:
@@ -87,9 +107,6 @@ def main(page: ft.Page):
             page.update()
         else:
             name = txt_name.value
-            # Here changed the variables, I'm trying to make an interface to select them
-            
-
             form = fn.calculate_error(name, const)
             fig = fn.render_formula(form)
             page.add(MatplotlibChart(fig, scale=1))
@@ -104,7 +121,6 @@ def main(page: ft.Page):
         ft.Container(expand=1, content=I)
     ])
     page.add(r)
-    
 
 
 ft.app(target=main)
